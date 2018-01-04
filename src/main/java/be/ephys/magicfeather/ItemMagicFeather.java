@@ -17,8 +17,6 @@ import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -121,13 +119,13 @@ public class ItemMagicFeather extends Item {
         player.sendPlayerAbilities();
     }
 
-    @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent event) {
-        if (event.side != Side.SERVER) {
+    @Override
+    public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
+        if (!world.isRemote || !(entity instanceof EntityPlayer)) {
             return;
         }
 
-        EntityPlayer player = event.player;
+        EntityPlayer player = (EntityPlayer) entity;
 
         MagicFeatherData data = ItemMagicFeather.playerData.get(player);
         if (data == null) {
@@ -153,7 +151,7 @@ public class ItemMagicFeather extends Item {
         private final EntityPlayer player;
         private boolean hasItem = false;
 
-        private int checkTick = 0;
+        private long checkTick;
         private boolean beaconInRangeCache;
 
         public MagicFeatherData(EntityPlayer player) {
@@ -201,7 +199,6 @@ public class ItemMagicFeather extends Item {
         }
 
         private boolean checkBeaconInRange(EntityPlayer player) {
-
             if (checkTick++ % 40 != 0) {
                 return beaconInRangeCache;
             }

@@ -18,7 +18,6 @@ public class ModItems {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> event) {
         event.getRegistry().register(magicFeather);
-        MinecraftForge.EVENT_BUS.register(ModItems.magicFeather);
 
         magicFeather.setCreativeTab(CreativeTabs.TRANSPORTATION);
     }
